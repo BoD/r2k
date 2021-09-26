@@ -10,6 +10,8 @@ object Versions {
     const val COROUTINES = "1.5.0"
     const val KOTLINX_CLI = "0.3.2"
     const val JAVAX_MAIL = "1.6.2"
+    const val ROME = "1.16.0"
+
 
     // Testing dependencies
     const val JUNIT = "4.13.2"

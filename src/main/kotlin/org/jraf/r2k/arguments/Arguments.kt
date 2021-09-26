@@ -36,51 +36,61 @@ import kotlinx.cli.required
 class Arguments(av: Array<String>) {
     private val parser = ArgParser("r2k")
 
-    val emailAuthenticationUserName: String by parser.option(ArgType.String,
+    val emailAuthenticationUserName: String by parser.option(
+        type = ArgType.String,
         fullName = "email-authentication-user-name",
         shortName = "u",
         description = "Email authentication user name")
         .required()
 
-    val emailAuthenticationPassword: String by parser.option(ArgType.String,
+    val emailAuthenticationPassword: String by parser.option(
+        type = ArgType.String,
         fullName = "email-authentication-password",
         shortName = "p",
         description = "Email authentication password")
         .required()
 
-    val emailSmtpHost: String by parser.option(ArgType.String,
+    val emailSmtpHost: String by parser.option(
+        type = ArgType.String,
         fullName = "email-smtp-host",
         shortName = "s",
         description = "Email smtp host")
         .default("smtp.gmail.com")
 
-    val emailSmtpPort: Int by parser.option(ArgType.Int,
+    val emailSmtpPort: Int by parser.option(
+        type = ArgType.Int,
         fullName = "email-smtp-port",
         shortName = "o",
         description = "Email smtp port")
         .default(587)
 
-    val emailSmtpTls: Boolean by parser.option(ArgType.Boolean,
+    val emailSmtpTls: Boolean by parser.option(
+        type = ArgType.Boolean,
         fullName = "email-smtp-tls",
         shortName = "t",
         description = "Use TLS for email smtp")
         .default(true)
 
-    val kindleEmail: String by parser.option(ArgType.String,
+    val kindleEmail: String by parser.option(
+        type = ArgType.String,
         fullName = "kindle-email",
         shortName = "k",
         description = "Kindle email address")
         .required()
 
-    val emailFrom: String by parser.option(ArgType.String,
+    val emailFrom: String by parser.option(
+        type = ArgType.String,
         fullName = "email-from",
         shortName = "f",
         description = "Email from address")
         .required()
 
 
-//    private val accountsStr: List<String> by parser.argument(ArgType.String, "accounts", description = "Accounts").vararg()
-//    val accountArguments: List<AccountArgument> get() = accountsStr.map(String::toAccountArgument)
+    val opmlFile: String by parser.argument(
+        type = ArgType.String,
+        fullName = "opml-file",
+        description = "OPML file"
+    )
 
     init {
         parser.parse(av)

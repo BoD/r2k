@@ -23,8 +23,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import org.jraf.r2k.arguments.Arguments
 import org.jraf.r2k.email.EmailSender
+import org.jraf.r2k.feed.FeedReader
 import org.jraf.r2k.url2pdf.Url2PdfExecutor
 import org.jraf.r2k.util.Log
 
@@ -33,27 +37,53 @@ suspend fun main(args: Array<String>) {
     Log.d("Hello World!")
     val arguments = Arguments(args)
 
-    val pdfFile = File("/tmp/A random wikipedia page.pdf")
-
-    Url2PdfExecutor().downloadUrlToPdf(
-        "https://en.wikipedia.org/wiki/Special:Random",
-        pdfFile
-    )
-
-    EmailSender(EmailSender.Config(
+    val sentEntryUrlList = mutableSetOf<String>()
+    val url2PdfExecutor = Url2PdfExecutor()
+    val emailSender = EmailSender(EmailSender.Config(
         authenticationUserName = arguments.emailAuthenticationUserName,
         authenticationPassword = arguments.emailAuthenticationPassword,
         smtpHost = arguments.emailSmtpHost,
         smtpPort = arguments.emailSmtpPort,
         smtpTls = arguments.emailSmtpTls,
-    )).sendEmail(
-        fromName = arguments.emailFrom,
-        fromAddress = arguments.emailFrom,
-        toName = arguments.kindleEmail,
-        toAddress = arguments.kindleEmail,
-        subject = "convert",
-        content = "convert",
-        attachment = pdfFile
-    )
+    ))
+
+    while (true) {
+        try {
+            Log.d("Fetching entry list")
+            val entryList = FeedReader().getFirstEntryOfAllFeeds(File(arguments.opmlFile))
+            Log.d(entryList)
+            for (entry in entryList) {
+                if (entry.url in sentEntryUrlList) continue
+                val pdfFile = File("/tmp/${entry.title} ${formatDate(entry.publishedDate)}.pdf")
+                if (pdfFile.exists()) {
+                    Log.d("$pdfFile already present: ignore")
+                    sentEntryUrlList += entry.url
+                    continue
+                }
+
+                url2PdfExecutor.downloadUrlToPdf(
+                    url = entry.url,
+                    destination = pdfFile
+                )
+
+                emailSender.sendEmail(
+                    fromName = arguments.emailFrom,
+                    fromAddress = arguments.emailFrom,
+                    toName = arguments.kindleEmail,
+                    toAddress = arguments.kindleEmail,
+                    subject = "convert",
+                    content = "convert",
+                    attachment = pdfFile
+                )
+                sentEntryUrlList += entry.url
+            }
+        } catch (t: Throwable) {
+            Log.w(t, "Caught exception in main loop")
+        }
+
+        Log.d("Sleep 4 hours")
+        TimeUnit.HOURS.sleep(4)
+    }
 }
 
+private fun formatDate(date: Date): String = SimpleDateFormat("yyyy-MM-dd").format(date)

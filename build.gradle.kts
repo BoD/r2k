@@ -45,7 +45,8 @@ application {
 
 tasks {
     named<ShadowJar>("shadowJar") {
-        minimize()
+        // Do not minimize because Rome and Javax Mail are loading classes dynamically
+        // minimize()
     }
 
     // Configuration for gradle-versions-plugin

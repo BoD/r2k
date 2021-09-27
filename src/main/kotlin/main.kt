@@ -37,8 +37,11 @@ suspend fun main(args: Array<String>) {
     Log.d("Hello World!")
     val arguments = Arguments(args)
 
+    val tmpDir = File("/tmp/r2k")
+    tmpDir.mkdirs()
+
     val sentEntryUrlList = mutableSetOf<String>()
-    val url2PdfExecutor = Url2PdfExecutor()
+    val url2PdfExecutor = Url2PdfExecutor(tmpDir)
     val emailSender = EmailSender(EmailSender.Config(
         authenticationUserName = arguments.emailAuthenticationUserName,
         authenticationPassword = arguments.emailAuthenticationPassword,
@@ -54,7 +57,7 @@ suspend fun main(args: Array<String>) {
             Log.d(entryList)
             for (entry in entryList) {
                 if (entry.url in sentEntryUrlList) continue
-                val pdfFile = File("/tmp/${entry.title} ${formatDate(entry.publishedDate)}.pdf")
+                val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
                 if (pdfFile.exists()) {
                     Log.d("$pdfFile already present: ignore")
                     sentEntryUrlList += entry.url

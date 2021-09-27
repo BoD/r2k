@@ -4,8 +4,7 @@ import org.jraf.r2k.util.Log
 import org.jraf.r2k.util.runCommand
 import java.io.File
 
-class Url2PdfExecutor() {
-    private val tmpDir = File("/tmp")
+class Url2PdfExecutor(private val tmpDir: File) {
     private val scriptFile = File(tmpDir, "url2pdf.js")
 
     private fun installScriptIfNeeded() {

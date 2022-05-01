@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+The author's personal list of feeds of interest, kept here as an example.
+-->
+
+<opml version="1.0">
+    <head>
+        <title>BoD's RSS feeds</title>
+    </head>
+    <body>
+        <outline text="The Hacker Factor Blog" title="The Hacker Factor Blog" type="rss" xmlUrl="https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2"/>
+        <outline text="Two-Bit History" title="Two-Bit History" type="rss" xmlUrl="https://twobithistory.org/feed.xml"/>
+        <outline text="CommonsWare" title="CommonsWare" type="rss" xmlUrl="https://commonsware.com/blog/feed.atom"/>
+        <outline text="The Clean Code Blog" title="The Clean Code Blog" type="rss" xmlUrl="http://blog.cleancoder.com/atom.xml"/>
+        <outline text="Notion API" title="Notion API" type="rss" xmlUrl="https://developers.notion.com/changelog.rss"/>
+        <outline text="Apollo GraphQL Blog" title="Apollo GraphQL Blog" type="rss" xmlUrl="https://www.apollographql.com/blog/rss.xml"/>
+        <outline text="Continuing Ed with Edward Snowden" title="Continuing Ed with Edward Snowden" type="rss" xmlUrl="https://edwardsnowden.substack.com/feed"/>
+        <outline text="Lee Byron" title="Lee Byron" type="rss" xmlUrl="https://medium.com/feed/@leeb"/>
+        <outline text="Martin Bonnin" title="Martin Bonnin" type="rss" xmlUrl="https://blog.mbonnin.net/rss.xml"/>
+        <outline text="Zac Sweers" title="Zac Sweers" type="rss" xmlUrl="https://www.zacsweers.dev/rss/"/>
+        <outline text="JetBrains News" title="JetBrains News" type="rss" xmlUrl="https://blog.jetbrains.com/blog/feed/"/>
+        <outline text="John O'Reilly" title="John O'Reilly" type="rss" xmlUrl="https://johnoreilly.dev/atom.xml"/>
+        <outline text="Schneier on Security" title="Schneier on Security" type="rss" xmlUrl="https://www.schneier.com/feed/atom/"/>
+        <outline text="Coding Horror" title="Coding Horror" type="rss" xmlUrl="https://blog.codinghorror.com/rss/"/>
+        <outline text="ongoing by Tim Bray" title="ongoing by Tim Bray" type="rss" xmlUrl="https://www.tbray.org/ongoing/ongoing.atom"/>
+        <outline text="The Qonto Way" title="The Qonto Way" type="rss" xmlUrl="https://medium.com/feed/qonto-way/tagged/tech"/>
+    </body>
+</opml>

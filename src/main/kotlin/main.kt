@@ -33,7 +33,7 @@ import org.jraf.r2k.url2pdf.Url2PdfExecutor
 import org.jraf.r2k.util.Log
 
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun main(args: Array<String>) {
+fun main(args: Array<String>) {
     Log.d("Hello World!")
     val arguments = Arguments(args)
 
@@ -42,13 +42,15 @@ suspend fun main(args: Array<String>) {
 
     val sentEntryUrlList = mutableSetOf<String>()
     val url2PdfExecutor = Url2PdfExecutor(tmpDir)
-    val emailSender = EmailSender(EmailSender.Config(
-        authenticationUserName = arguments.emailAuthenticationUserName,
-        authenticationPassword = arguments.emailAuthenticationPassword,
-        smtpHost = arguments.emailSmtpHost,
-        smtpPort = arguments.emailSmtpPort,
-        smtpTls = arguments.emailSmtpTls,
-    ))
+    val emailSender = EmailSender(
+        EmailSender.Config(
+            authenticationUserName = arguments.emailAuthenticationUserName,
+            authenticationPassword = arguments.emailAuthenticationPassword,
+            smtpHost = arguments.emailSmtpHost,
+            smtpPort = arguments.emailSmtpPort,
+            smtpTls = arguments.emailSmtpTls,
+        )
+    )
 
     while (true) {
         try {
@@ -64,10 +66,15 @@ suspend fun main(args: Array<String>) {
                     continue
                 }
 
-                url2PdfExecutor.downloadUrlToPdf(
-                    url = entry.url,
-                    destination = pdfFile
-                )
+                try {
+                    url2PdfExecutor.downloadUrlToPdf(
+                        url = entry.url,
+                        destination = pdfFile
+                    )
+                } catch (t: Throwable) {
+                    Log.w(t, "Could not download ${entry.url}")
+                    continue
+                }
 
                 emailSender.sendEmail(
                     fromName = arguments.emailFrom,

@@ -23,7 +23,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8", Versions.COROUTINES)
     implementation("org.jetbrains.kotlinx", "kotlinx-cli", Versions.KOTLINX_CLI)
     implementation("com.sun.mail", "javax.mail", Versions.JAVAX_MAIL)
-    implementation("com.sun.mail", "javax.mail", Versions.JAVAX_MAIL)
     implementation("com.rometools", "rome", Versions.ROME)
     implementation("com.rometools", "rome-opml", Versions.ROME)
 
@@ -40,7 +39,7 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "MainKt"
+    mainClass.set("MainKt")
 }
 
 tasks {

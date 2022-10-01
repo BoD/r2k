@@ -19,10 +19,13 @@ The author's personal list of feeds of interest, kept here as an example.
         <outline text="Martin Bonnin" title="Martin Bonnin" type="rss" xmlUrl="https://blog.mbonnin.net/rss.xml"/>
         <outline text="Zac Sweers" title="Zac Sweers" type="rss" xmlUrl="https://www.zacsweers.dev/rss/"/>
         <outline text="JetBrains News" title="JetBrains News" type="rss" xmlUrl="https://blog.jetbrains.com/blog/feed/"/>
-        <outline text="John O'Reilly" title="John O'Reilly" type="rss" xmlUrl="https://johnoreilly.dev/atom.xml"/>
+        <outline text="John O'Reilly" title="John O'Reilly" type="rss" xmlUrl="https://johnoreilly.dev/feed.xml"/>
         <outline text="Schneier on Security" title="Schneier on Security" type="rss" xmlUrl="https://www.schneier.com/feed/atom/"/>
         <outline text="Coding Horror" title="Coding Horror" type="rss" xmlUrl="https://blog.codinghorror.com/rss/"/>
         <outline text="ongoing by Tim Bray" title="ongoing by Tim Bray" type="rss" xmlUrl="https://www.tbray.org/ongoing/ongoing.atom"/>
         <outline text="The Qonto Way" title="The Qonto Way" type="rss" xmlUrl="https://medium.com/feed/qonto-way/tagged/tech"/>
+        <outline text="Oculus" title="Oculus" type="rss" xmlUrl="https://www.oculus.com/blog/rss/"/>
+        <outline text="SlashFilm" title="SlashFilm" type="rss" xmlUrl="https://www.slashfilm.com/feed/"/>
+        <outline text="Joel on Software" title="Joel on Software" type="rss" xmlUrl="https://www.joelonsoftware.com/feed/"/>
     </body>
 </opml>

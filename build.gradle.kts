@@ -1,3 +1,5 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
@@ -5,6 +7,7 @@ plugins {
     kotlin("kapt")
     application
     id("com.github.johnrengelman.shadow")
+    id("com.bmuschko.docker-java-application")
 }
 
 group = "org.jraf"
@@ -54,4 +57,54 @@ tasks.register<DefaultTask>("shadowJarExecutable") {
     }
 }
 
-// Run `./gradlew shadowJarExecutable` to build the "really executable jar"
+docker {
+    javaApplication {
+        maintainer.set("BoD <BoD@JRAF.org>")
+        ports.set(emptyList())
+        images.add("bodlulu/${rootProject.name}:latest")
+    }
+    registryCredentials {
+        username.set(System.getenv("DOCKER_USERNAME"))
+        password.set(System.getenv("DOCKER_PASSWORD"))
+    }
+
+}
+
+tasks.withType<DockerBuildImage> {
+    platform.set("linux/amd64")
+}
+
+tasks.withType<Dockerfile> {
+    // Install chrome, node, puppeteer, and dependencies
+    // This is heavily based on https://github.com/puppeteer/puppeteer/blob/main/docker/Dockerfile
+    instruction("RUN apt-get update")
+    instruction("RUN apt-get install -y curl gnupg")
+    instruction(
+        """
+            RUN apt-get update \
+            && apt-get install -y wget gnupg \
+            && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+            && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+            && apt-get update \
+            && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros fonts-kacst fonts-freefont-ttf libxss1 \
+              --no-install-recommends \
+            && rm -rf /var/lib/apt/lists/*
+        """.trimIndent()
+    )
+    instruction("RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -")
+    instruction("RUN apt-get install -y nodejs")
+    instruction("RUN npm install -g puppeteer-core")
+    instruction(
+        """
+            RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+            && mkdir -p /home/pptruser/Downloads \
+            && chown -R pptruser:pptruser /home/pptruser
+        """.trimIndent()
+    )
+    instruction("USER pptruser")
+    instruction("ENV NODE_PATH=/usr/lib/node_modules")
+}
+
+// `./gradlew shadowJarExecutable` to build the "really executable jar"
+// `./gradlew refreshVersions` to update dependencies
+// `DOCKER_USERNAME=<your docker hub login> DOCKER_PASSWORD=<your docker hub password> ./gradlew dockerPushImage` to build and push the image

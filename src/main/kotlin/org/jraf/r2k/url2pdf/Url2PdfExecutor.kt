@@ -1,8 +1,8 @@
 package org.jraf.r2k.url2pdf
 
+import java.io.File
 import org.jraf.r2k.util.Log
 import org.jraf.r2k.util.runCommand
-import java.io.File
 
 class Url2PdfExecutor(private val tmpDir: File) {
     private val scriptFile = File(tmpDir, "url2pdf.js")
@@ -15,7 +15,8 @@ class Url2PdfExecutor(private val tmpDir: File) {
             val scriptText = scriptStream!!.bufferedReader().readText()
             scriptFile.writeText(scriptText)
             scriptFile.setExecutable(true)
-            runCommand(tmpDir, "npm", "install", "puppeteer")
+            // Commented out because puppeteer is installed in the Docker image
+//            runCommand(tmpDir, "npm", "install", "puppeteer")
             Log.d("Done")
         }
     }

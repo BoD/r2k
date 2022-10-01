@@ -32,7 +32,6 @@ import org.jraf.r2k.feed.FeedReader
 import org.jraf.r2k.url2pdf.Url2PdfExecutor
 import org.jraf.r2k.util.Log
 
-@Suppress("BlockingMethodInNonBlockingContext")
 fun main(args: Array<String>) {
     Log.d("Hello World!")
     val arguments = Arguments(args)

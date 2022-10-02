@@ -17,5 +17,5 @@ DOCKER_USERNAME=<your docker hub login> DOCKER_PASSWORD=<your docker hub passwor
 
 ```
 docker pull bodlulu/r2k
-docker run -v /Users/bod/gitrepo/r2k/etc:/foo bodlulu/r2k -u xxx@yyy.com -p xxxxxx -k zzz@kindle.com -f xxx@yyy.com /foo/file.opml
+docker run -v /path/to/where/your/opml/file/is:/opml bodlulu/r2k -u xxx@yyy.com -p xxxxxx -k zzz@kindle.com -f xxx@yyy.com /opml/file.opml
 ```

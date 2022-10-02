@@ -77,11 +77,11 @@ tasks.withType<DockerBuildImage> {
 tasks.withType<Dockerfile> {
     // Install chrome, node, puppeteer, and dependencies
     // This is heavily based on https://github.com/puppeteer/puppeteer/blob/main/docker/Dockerfile
-    instruction("RUN apt-get update")
-    instruction("RUN apt-get install -y curl gnupg")
-    instruction(
+    runCommand("apt-get update")
+    runCommand("apt-get install -y curl gnupg")
+    runCommand(
         """
-            RUN apt-get update \
+            apt-get update \
             && apt-get install -y wget gnupg \
             && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
             && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
@@ -91,18 +91,18 @@ tasks.withType<Dockerfile> {
             && rm -rf /var/lib/apt/lists/*
         """.trimIndent()
     )
-    instruction("RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -")
-    instruction("RUN apt-get install -y nodejs")
-    instruction("RUN npm install -g puppeteer-core")
-    instruction(
+    runCommand("curl -fsSL https://deb.nodesource.com/setup_18.x | bash -")
+    runCommand("apt-get install -y nodejs")
+    runCommand("npm install -g puppeteer-core")
+    runCommand(
         """
-            RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+            groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
             && mkdir -p /home/pptruser/Downloads \
             && chown -R pptruser:pptruser /home/pptruser
         """.trimIndent()
     )
-    instruction("USER pptruser")
-    instruction("ENV NODE_PATH=/usr/lib/node_modules")
+    user("pptruser")
+    environmentVariable("NODE_PATH", "/usr/lib/node_modules")
 }
 
 // `./gradlew shadowJarExecutable` to build the "really executable jar"

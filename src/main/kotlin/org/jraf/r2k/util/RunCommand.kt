@@ -3,12 +3,12 @@ package org.jraf.r2k.util
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-fun runCommand(workingDir: File, vararg command: String): String {
+fun runCommand(workingDir: File, vararg command: String) {
     Log.d("runCommand workingDir=$workingDir command=${command.asList()}")
     val process = ProcessBuilder(command.asList())
         .directory(workingDir)
-        .redirectOutput(ProcessBuilder.Redirect.PIPE)
-        .redirectError(ProcessBuilder.Redirect.PIPE)
+        .redirectOutput(File("/dev/null"))
+        .redirectError(File("/dev/null"))
         .start()
 
     val success = process.waitFor(1, TimeUnit.MINUTES)
@@ -17,7 +17,6 @@ fun runCommand(workingDir: File, vararg command: String): String {
         Log.w("Timeout reached while executing the command")
         throw Exception("Timeout reached while executing the command")
     }
-    val res = process.inputStream.bufferedReader().readText().trim()
+    process.destroyForcibly()
     Log.d("Command executed successfully")
-    return res
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import org.jraf.r2k.arguments.Arguments
 import org.jraf.r2k.email.EmailSender
 import org.jraf.r2k.feed.FeedReader
+import org.jraf.r2k.persist.SentUrls
 import org.jraf.r2k.url2pdf.Url2PdfExecutor
 import org.jraf.r2k.util.Log
 
@@ -39,7 +40,7 @@ fun main(args: Array<String>) {
     val tmpDir = File("/tmp/r2k")
     tmpDir.mkdirs()
 
-    val sentEntryUrlList = mutableSetOf<String>()
+    val sentUrls = SentUrls(File(tmpDir, "sentUrls.txt")).also { it.load() }
     val url2PdfExecutor = Url2PdfExecutor(tmpDir)
     val emailSender = EmailSender(
         EmailSender.Config(
@@ -57,11 +58,11 @@ fun main(args: Array<String>) {
             val entryList = FeedReader().getFirstEntryOfAllFeeds(File(arguments.opmlFile))
             Log.d(entryList)
             for (entry in entryList) {
-                if (entry.url in sentEntryUrlList) continue
+                if (entry.url in sentUrls) continue
                 val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
                 if (pdfFile.exists()) {
                     Log.d("$pdfFile already present: ignore")
-                    sentEntryUrlList += entry.url
+                    sentUrls += entry.url
                     continue
                 }
 
@@ -84,7 +85,7 @@ fun main(args: Array<String>) {
                     content = "convert",
                     attachment = pdfFile
                 )
-                sentEntryUrlList += entry.url
+                sentUrls += entry.url
             }
         } catch (t: Throwable) {
             Log.w(t, "Caught exception in main loop")

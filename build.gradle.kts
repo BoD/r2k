@@ -1,11 +1,11 @@
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile.CopyFileInstruction
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm")
-    kotlin("kapt")
-    application
+    id("application")
     id("com.github.johnrengelman.shadow")
     id("com.bmuschko.docker-java-application")
 }
@@ -13,8 +13,12 @@ plugins {
 group = "org.jraf"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
+kotlin {
+    jvmToolchain(11)
+}
+
+application {
+    mainClass.set("MainKt")
 }
 
 dependencies {
@@ -23,10 +27,6 @@ dependencies {
     implementation("com.sun.mail:javax.mail:_")
     implementation("com.rometools:rome:_")
     implementation("com.rometools:rome-opml:_")
-}
-
-application {
-    mainClass.set("MainKt")
 }
 
 tasks {
@@ -59,6 +59,8 @@ tasks.register<DefaultTask>("shadowJarExecutable") {
 
 docker {
     javaApplication {
+        // Use OpenJ9 instead of the default one
+        baseImage.set("adoptopenjdk/openjdk11-openj9:x86_64-ubuntu-jre-11.0.18_10_openj9-0.36.1")
         maintainer.set("BoD <BoD@JRAF.org>")
         ports.set(emptyList())
         images.add("bodlulu/${rootProject.name}:latest")
@@ -105,6 +107,14 @@ tasks.withType<Dockerfile> {
     user("pptruser")
     environmentVariable("NODE_PATH", "/usr/lib/node_modules")
     environmentVariable("MALLOC_ARENA_MAX", "4")
+
+    // Move the COPY instructions to the end
+    // See https://github.com/bmuschko/gradle-docker-plugin/issues/1093
+    instructions.set(
+        instructions.get().sortedBy { instruction ->
+            if (instruction.keyword == CopyFileInstruction.KEYWORD) 1 else 0
+        }
+    )
 }
 
 // `./gradlew shadowJarExecutable` to build the "really executable jar"

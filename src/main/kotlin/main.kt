@@ -58,7 +58,10 @@ fun main(args: Array<String>) {
             val entryList = FeedReader().getFirstEntryOfAllFeeds(File(arguments.opmlFile))
             Log.d(entryList)
             for (entry in entryList) {
-                if (entry.url in sentUrls) continue
+                if (entry.url in sentUrls) {
+                    Log.d("${entry.url} already sent: ignore")
+                    continue
+                }
                 val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
                 if (pdfFile.exists()) {
                     Log.d("$pdfFile already present: ignore")
@@ -86,6 +89,9 @@ fun main(args: Array<String>) {
                     attachment = pdfFile
                 )
                 sentUrls += entry.url
+
+                Log.d("Delete $pdfFile")
+                pdfFile.delete()
             }
         } catch (t: Throwable) {
             Log.w(t, "Caught exception in main loop")

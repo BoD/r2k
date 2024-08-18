@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2020-present Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2024-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,72 +34,72 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
-    Log.d("Hello World!")
-    val arguments = Arguments(args)
+  Log.d("Hello World!")
+  val arguments = Arguments(args)
 
-    val tmpDir = File("/tmp/r2k")
-    tmpDir.mkdirs()
+  val tmpDir = File("/tmp/r2k")
+  tmpDir.mkdirs()
 
-    val sentUrls = SentUrls(File(tmpDir, "sentUrls.txt")).also { it.load() }
-    val url2Pdf = Url2Pdf(tmpDir = tmpDir, pathToIDontCareAboutCookiesExtension = arguments.pathToIDontCareAboutCookiesExtension)
-    val emailSender = EmailSender(
-        EmailSender.Config(
-            authenticationUserName = arguments.emailAuthenticationUserName,
-            authenticationPassword = arguments.emailAuthenticationPassword,
-            smtpHost = arguments.emailSmtpHost,
-            smtpPort = arguments.emailSmtpPort,
-            smtpTls = arguments.emailSmtpTls,
-        )
+  val sentUrls = SentUrls(File(tmpDir, "sentUrls.txt")).also { it.load() }
+  val url2Pdf = Url2Pdf(tmpDir = tmpDir, pathToIDontCareAboutCookiesExtension = arguments.pathToIDontCareAboutCookiesExtension)
+  val emailSender = EmailSender(
+    EmailSender.Config(
+      authenticationUserName = arguments.emailAuthenticationUserName,
+      authenticationPassword = arguments.emailAuthenticationPassword,
+      smtpHost = arguments.emailSmtpHost,
+      smtpPort = arguments.emailSmtpPort,
+      smtpTls = arguments.emailSmtpTls,
     )
+  )
 
-    while (true) {
-        try {
-            Log.d("Fetching entry list")
-            val entryList = FeedReader().getFirstEntryOfAllFeeds(File(arguments.opmlFile))
-            Log.d(entryList)
-            for (entry in entryList) {
-                if (entry.url in sentUrls) {
-                    Log.d("${entry.url} already sent: ignore")
-                    continue
-                }
-                val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
-                if (pdfFile.exists()) {
-                    Log.d("$pdfFile already present: ignore")
-                    sentUrls += entry.url
-                    continue
-                }
-
-                try {
-                    url2Pdf.downloadUrlToPdf(
-                        url = entry.url,
-                        destination = pdfFile
-                    )
-                } catch (t: Throwable) {
-                    Log.w(t, "Could not download ${entry.url}")
-                    continue
-                }
-
-                emailSender.sendEmail(
-                    fromName = arguments.emailFrom,
-                    fromAddress = arguments.emailFrom,
-                    toName = arguments.kindleEmail,
-                    toAddress = arguments.kindleEmail,
-                    subject = "convert",
-                    content = "convert",
-                    attachment = pdfFile
-                )
-                sentUrls += entry.url
-
-                Log.d("Delete $pdfFile")
-                pdfFile.delete()
-            }
-        } catch (t: Throwable) {
-            Log.w(t, "Caught exception in main loop")
+  while (true) {
+    try {
+      Log.d("Fetching entry list")
+      val entryList = FeedReader().getFirstEntryOfAllFeeds(File(arguments.opmlFile))
+      Log.d(entryList)
+      for (entry in entryList) {
+        if (entry.url in sentUrls) {
+          Log.d("${entry.url} already sent: ignore")
+          continue
+        }
+        val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
+        if (pdfFile.exists()) {
+          Log.d("$pdfFile already present: ignore")
+          sentUrls += entry.url
+          continue
         }
 
-        Log.d("Sleep 4 hours")
-        TimeUnit.HOURS.sleep(4)
+        try {
+          url2Pdf.downloadUrlToPdf(
+            url = entry.url,
+            destination = pdfFile
+          )
+        } catch (t: Throwable) {
+          Log.w(t, "Could not download ${entry.url}")
+          continue
+        }
+
+        emailSender.sendEmail(
+          fromName = arguments.emailFrom,
+          fromAddress = arguments.emailFrom,
+          toName = arguments.kindleEmail,
+          toAddress = arguments.kindleEmail,
+          subject = "convert",
+          content = "convert",
+          attachment = pdfFile
+        )
+        sentUrls += entry.url
+
+        Log.d("Delete $pdfFile")
+        pdfFile.delete()
+      }
+    } catch (t: Throwable) {
+      Log.w(t, "Caught exception in main loop")
     }
+
+    Log.d("Sleep 4 hours")
+    TimeUnit.HOURS.sleep(4)
+  }
 }
 
 private fun formatDate(date: Date): String = SimpleDateFormat("yyyy-MM-dd").format(date)

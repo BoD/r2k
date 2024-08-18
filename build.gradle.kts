@@ -27,6 +27,7 @@ dependencies {
     implementation("com.sun.mail:javax.mail:_")
     implementation("com.rometools:rome:_")
     implementation("com.rometools:rome-opml:_")
+    implementation("com.microsoft.playwright:playwright:_")
 }
 
 tasks {
@@ -78,35 +79,45 @@ tasks.withType<DockerBuildImage> {
 }
 
 tasks.withType<Dockerfile> {
-    // Install chrome, node, puppeteer, and dependencies
-    // This is heavily based on https://github.com/puppeteer/puppeteer/blob/main/docker/Dockerfile
+    environmentVariable("PLAYWRIGHT_BROWSERS_PATH", "/playwright-browsers")
+
+    // Install curl
+    //runCommand("apt-get install -y curl gnupg")
+
+    // Install browser dependencies
     runCommand("apt-get update")
-    runCommand("apt-get install -y curl gnupg")
     runCommand(
         """
-            apt-get update \
-            && apt-get install -y wget gnupg \
-            && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-            && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-            && apt-get update \
-            && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros fonts-kacst fonts-freefont-ttf libxss1 \
-              --no-install-recommends \
-            && rm -rf /var/lib/apt/lists/*
+        apt-get install -y \
+          libxcb-shm0\
+          libx11-xcb1\            
+          libx11-6\               
+          libxcb1\                
+          libxext6\               
+          libxrandr2\             
+          libxcomposite1\         
+          libxcursor1\            
+          libxdamage1\            
+          libxfixes3\             
+          libxi6\                 
+          libgtk-3-0\             
+          libpangocairo-1.0-0\    
+          libpango-1.0-0\         
+          libatk1.0-0\            
+          libcairo-gobject2\      
+          libcairo2\              
+          libgdk-pixbuf2.0-0\     
+          libglib2.0-0\           
+          libasound2\             
+          libxrender1\            
+          libdbus-1-3
         """.trimIndent()
     )
-    runCommand("curl -fsSL https://deb.nodesource.com/setup_18.x | bash -")
-    runCommand("apt-get install -y nodejs")
-    runCommand("npm install -g puppeteer-core")
-    runCommand(
-        """
-            groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-            && mkdir -p /home/pptruser/Downloads \
-            && chown -R pptruser:pptruser /home/pptruser
-        """.trimIndent()
-    )
-    user("pptruser")
-    environmentVariable("NODE_PATH", "/usr/lib/node_modules")
-    environmentVariable("MALLOC_ARENA_MAX", "4")
+
+    // Install "I Still Don't Care About Cookies" extension
+    runCommand("curl https://github.com/OhMyGuus/I-Still-Dont-Care-About-Cookies/releases/download/v1.1.4/ISDCAC-chrome-source.zip -o ISDCAC-chrome-source.zip")
+    runCommand("unzip ISDCAC-chrome-source.zip -d /ISDCAC-chrome-source")
+    runCommand("rm ISDCAC-chrome-source.zip")
 
     // Move the COPY instructions to the end
     // See https://github.com/bmuschko/gradle-docker-plugin/issues/1093

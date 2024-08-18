@@ -32,7 +32,6 @@ import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.default
 import kotlinx.cli.required
 
-@Suppress("PropertyName", "PrivatePropertyName")
 class Arguments(av: Array<String>) {
     private val parser = ArgParser("r2k")
 
@@ -40,51 +39,66 @@ class Arguments(av: Array<String>) {
         type = ArgType.String,
         fullName = "email-authentication-user-name",
         shortName = "u",
-        description = "Email authentication user name")
+        description = "Email authentication user name"
+    )
         .required()
 
     val emailAuthenticationPassword: String by parser.option(
         type = ArgType.String,
         fullName = "email-authentication-password",
         shortName = "p",
-        description = "Email authentication password")
+        description = "Email authentication password"
+    )
         .required()
 
     val emailSmtpHost: String by parser.option(
         type = ArgType.String,
         fullName = "email-smtp-host",
         shortName = "s",
-        description = "Email smtp host")
+        description = "Email smtp host"
+    )
         .default("smtp.gmail.com")
 
     val emailSmtpPort: Int by parser.option(
         type = ArgType.Int,
         fullName = "email-smtp-port",
         shortName = "o",
-        description = "Email smtp port")
+        description = "Email smtp port"
+    )
         .default(587)
 
     val emailSmtpTls: Boolean by parser.option(
         type = ArgType.Boolean,
         fullName = "email-smtp-tls",
         shortName = "t",
-        description = "Use TLS for email smtp")
+        description = "Use TLS for email smtp"
+    )
         .default(true)
 
     val kindleEmail: String by parser.option(
         type = ArgType.String,
         fullName = "kindle-email",
         shortName = "k",
-        description = "Kindle email address")
+        description = "Kindle email address"
+    )
         .required()
 
     val emailFrom: String by parser.option(
         type = ArgType.String,
         fullName = "email-from",
         shortName = "f",
-        description = "Email from address")
+        description = "Email from address"
+    )
         .required()
 
+
+    val pathToIDontCareAboutCookiesExtension: String by parser.option(
+        type = ArgType.String,
+        fullName = "path-to-i-dont-care-about-cookies-extension",
+        shortName = "x",
+        description = "Path to the I don't care about cookies extension"
+    )
+        .required()
 
     val opmlFile: String by parser.argument(
         type = ArgType.String,

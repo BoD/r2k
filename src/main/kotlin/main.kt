@@ -22,16 +22,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import org.jraf.r2k.arguments.Arguments
 import org.jraf.r2k.email.EmailSender
 import org.jraf.r2k.feed.FeedReader
 import org.jraf.r2k.persist.SentUrls
-import org.jraf.r2k.url2pdf.Url2PdfExecutor
+import org.jraf.r2k.url2pdf.Url2Pdf
 import org.jraf.r2k.util.Log
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
     Log.d("Hello World!")
@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
     tmpDir.mkdirs()
 
     val sentUrls = SentUrls(File(tmpDir, "sentUrls.txt")).also { it.load() }
-    val url2PdfExecutor = Url2PdfExecutor(tmpDir)
+    val url2Pdf = Url2Pdf(tmpDir = tmpDir, pathToIDontCareAboutCookiesExtension = arguments.pathToIDontCareAboutCookiesExtension)
     val emailSender = EmailSender(
         EmailSender.Config(
             authenticationUserName = arguments.emailAuthenticationUserName,
@@ -70,7 +70,7 @@ fun main(args: Array<String>) {
                 }
 
                 try {
-                    url2PdfExecutor.downloadUrlToPdf(
+                    url2Pdf.downloadUrlToPdf(
                         url = entry.url,
                         destination = pdfFile
                     )

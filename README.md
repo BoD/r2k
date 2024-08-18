@@ -17,5 +17,16 @@ DOCKER_USERNAME=<your docker hub login> DOCKER_PASSWORD=<your docker hub passwor
 
 ```
 docker pull bodlulu/r2k
-docker run --init -v /path/to/where/your/opml/file/is:/opml /path/to/where/to/put/temporary/files:/tmp bodlulu/r2k -u xxx@yyy.com -p xxxxxx -k zzz@kindle.com -f xxx@yyy.com -x /ISDCAC-chrome-source /opml/file.opml
+docker run \
+ --init \
+ -v /path/to/where/your/opml/file/is:/opml \
+ -v /path/to/where/to/put/temporary/files:/tmp \
+ -v /path/to/where/to/playwright-downloaded-browsers:/playwright-browsers \
+ bodlulu/r2k \
+ -u xxx@yyy.com \
+ -p xxxxxx \
+ -k zzz@kindle.com \
+ -f xxx@yyy.com \
+ -x /ISDCAC-chrome-source \
+ /opml/file.opml
 ```

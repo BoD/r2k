@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
   Log.d("Hello World!")
+
   val arguments = Arguments(args)
 
   val tmpDir = File("/tmp/r2k")

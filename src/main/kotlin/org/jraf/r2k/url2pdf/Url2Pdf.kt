@@ -51,6 +51,7 @@ class Url2Pdf(
               "--load-extension=$pathToIDontCareAboutCookiesExtension",
             )
           )
+          .setBypassCSP(true)
       )
         .use { browserContext ->
           browserContext.setDefaultTimeout(45_000.0)

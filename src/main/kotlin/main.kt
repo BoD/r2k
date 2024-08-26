@@ -98,8 +98,8 @@ fun main(args: Array<String>) {
       Log.w(t, "Caught exception in main loop")
     }
 
-    Log.d("Sleep 4 hours")
-    TimeUnit.HOURS.sleep(4)
+    Log.d("Sleep 2 hours")
+    TimeUnit.HOURS.sleep(2)
   }
 }
 

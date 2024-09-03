@@ -58,7 +58,7 @@ class FeedReader {
       }
       firstEntry?.let { entry ->
         Entry(
-          title = feed.title,
+          title = feed.title + ": " + entry.title,
           url = entry.link,
           publishedDate = entry.publishedDate ?: entry.updatedDate
         )

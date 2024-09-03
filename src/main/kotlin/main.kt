@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
           Log.d("${entry.url} already sent: ignore")
           continue
         }
-        val pdfFile = File(tmpDir, "${entry.title} ${formatDate(entry.publishedDate)}.pdf")
+        val pdfFile = File(tmpDir, "${entry.title} - ${formatDate(entry.publishedDate)}.pdf")
         if (pdfFile.exists()) {
           Log.d("$pdfFile already present: ignore")
           sentUrls += entry.url
@@ -98,8 +98,8 @@ fun main(args: Array<String>) {
       Log.w(t, "Caught exception in main loop")
     }
 
-    Log.d("Sleep 2 hours")
-    TimeUnit.HOURS.sleep(2)
+    Log.d("Sleep 1 hour")
+    TimeUnit.HOURS.sleep(1)
   }
 }
 

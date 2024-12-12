@@ -61,7 +61,7 @@ tasks.register<DefaultTask>("shadowJarExecutable") {
 docker {
   javaApplication {
     // Use OpenJ9 instead of the default one
-    baseImage.set("adoptopenjdk/openjdk11-openj9:x86_64-ubuntu-jre-11.0.18_10_openj9-0.36.1")
+    baseImage.set("adoptopenjdk/openjdk11-openj9:x86_64-ubuntu-jre-11.0.24_8_openj9-0.46.1")
     maintainer.set("BoD <BoD@JRAF.org>")
     ports.set(emptyList())
     images.add("bodlulu/${rootProject.name}:latest")
@@ -231,6 +231,10 @@ tasks.withType<Dockerfile> {
   runCommand("curl -L https://github.com/OhMyGuus/I-Still-Dont-Care-About-Cookies/releases/download/v1.1.4/ISDCAC-chrome-source.zip -o ISDCAC-chrome-source.zip")
   runCommand("unzip ISDCAC-chrome-source.zip -d /ISDCAC-chrome-source")
   runCommand("rm ISDCAC-chrome-source.zip")
+
+  // Apparently Chrome crashes, which produces core dumps, which take space. Disable core dumps.
+  runCommand("ulimit -c 0")
+  runCommand("echo 'ulimit -c 0 > /dev/null 2>&1' >> /etc/profile")
 
   // Move the COPY instructions to the end
   // See https://github.com/bmuschko/gradle-docker-plugin/issues/1093

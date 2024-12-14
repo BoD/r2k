@@ -39,52 +39,62 @@ class Url2Pdf(
   fun downloadUrlToPdf(url: String, destination: File) {
     Log.d("Downloading $url to $destination")
     val headless = true
-    Playwright.create().use { playwright ->
-      playwright.chromium().launchPersistentContext(
-        File(tmpDir, "playwright").toPath(),
-        BrowserType.LaunchPersistentContextOptions()
-          .setHeadless(headless)
-          .setArgs(
-            listOf(
-              "--headless=new",
-              "--disable-extensions-except=$pathToIDontCareAboutCookiesExtension",
-              "--load-extension=$pathToIDontCareAboutCookiesExtension",
+    try {
+      Playwright.create().use { playwright ->
+        playwright.chromium().launchPersistentContext(
+          File(tmpDir, "playwright").toPath(),
+          BrowserType.LaunchPersistentContextOptions()
+            .setHeadless(headless)
+            .setArgs(
+              listOf(
+                "--headless=new",
+                "--disable-extensions-except=$pathToIDontCareAboutCookiesExtension",
+                "--load-extension=$pathToIDontCareAboutCookiesExtension",
+              ),
             )
-          )
-          .setBypassCSP(true)
-      )
-        .use { browserContext ->
-          browserContext.setDefaultTimeout(45_000.0)
-          val page = browserContext.newPage()
-          page.navigate(url)
+            .setBypassCSP(true),
+        )
+          .use { browserContext ->
+            browserContext.setDefaultTimeout(45_000.0)
+            val page = browserContext.newPage()
+            page.navigate(url)
 
-          Log.d("Waiting for the page to finish loading")
-          try {
-            page.waitForLoadState(LoadState.NETWORKIDLE)
-          } catch (t: Throwable) {
-            // Happens when closing the browser, this is expected
-          }
+            Log.d("Waiting for the page to finish loading")
+            try {
+              page.waitForLoadState(LoadState.NETWORKIDLE)
+            } catch (t: Throwable) {
+              // Happens when closing the browser, this is expected
+            }
 
-          // Improve the style for the PDF
-          page.addStyleTag(
-            Page.AddStyleTagOptions().setContent(
-              """
+            // Improve the style for the PDF
+            page.addStyleTag(
+              Page.AddStyleTagOptions().setContent(
+                """
               * {
                 color: black!important;
                 font-variant-ligatures: none!important;
               }
-              """.trimIndent()
+              """.trimIndent(),
+              ),
             )
-          )
 
-          page.pdf(
-            Page.PdfOptions()
-              .setWidth("5in")
-              .setHeight("8in")
-              .setPrintBackground(false)
-              .setPath(destination.toPath())
-          )
+            page.pdf(
+              Page.PdfOptions()
+                .setWidth("5in")
+                .setHeight("8in")
+                .setPrintBackground(false)
+                .setPath(destination.toPath()),
+            )
+          }
+      }
+    } finally {
+      // PlayWright seems to leave some Chrome core dumps behind. Clean that so the disk does not fill up.
+      val files = File("/app").listFiles { _, name -> name.startsWith("core.") }
+      if (files != null) {
+        for (file in files) {
+          file.delete()
         }
+      }
     }
     Log.d("Done")
   }
